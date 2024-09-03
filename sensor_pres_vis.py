@@ -1,9 +1,27 @@
 import matplotlib.pyplot as plt
 import re
 import numpy as np
+import os
+from datetime import datetime
 
-# Read data from text file
-with open('2024-08-29_14-48-31_syringe.txt', 'r') as file:
+# Define the file name or leave it empty to select the latest automatically
+filename = ''
+
+# If filename is empty, find the latest file
+if not filename:
+    # List all .txt files in the current directory
+    txt_files = [f for f in os.listdir() if f.endswith('.txt')]
+    
+    # Filter files that match the naming pattern (datetime_syringe or datetime_mass)
+    valid_files = [f for f in txt_files if re.match(r'\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_syringe\.txt', f)]
+    
+    # Sort the files by datetime in the name and get the latest one
+    latest_file = max(valid_files, key=lambda x: datetime.strptime(x.split('_')[0] + '_' + x.split('_')[1], '%Y-%m-%d_%H-%M-%S'))
+    
+    filename = latest_file
+
+# Read data from the selected text file
+with open(filename, 'r') as file:
     data = file.readlines()
 
 # Initialize lists for timestamps and pressure values
